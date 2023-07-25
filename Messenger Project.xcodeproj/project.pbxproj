@@ -14,6 +14,7 @@
 		FA3415EC2A6354EE0033C5EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA3415EA2A6354EE0033C5EA /* LaunchScreen.storyboard */; };
 		FA3415FA2A63620B0033C5EA /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = FA3415F92A63620B0033C5EA /* SnapKit */; };
 		FA850EB02A6762FB004AD07C /* FAQViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA850EAF2A6762FB004AD07C /* FAQViewController.swift */; };
+		FA850EB22A6D2AFD004AD07C /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA850EB12A6D2AFD004AD07C /* RegistrationViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		FA3415EB2A6354EE0033C5EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA3415ED2A6354EE0033C5EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA850EAF2A6762FB004AD07C /* FAQViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQViewController.swift; sourceTree = "<group>"; };
+		FA850EB12A6D2AFD004AD07C /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				FA3415E32A6354EC0033C5EA /* AuthViewController.swift */,
+				FA850EB12A6D2AFD004AD07C /* RegistrationViewController.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 				FA850EB02A6762FB004AD07C /* FAQViewController.swift in Sources */,
 				FA3415E02A6354EC0033C5EA /* AppDelegate.swift in Sources */,
 				FA3415E22A6354EC0033C5EA /* SceneDelegate.swift in Sources */,
+				FA850EB22A6D2AFD004AD07C /* RegistrationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

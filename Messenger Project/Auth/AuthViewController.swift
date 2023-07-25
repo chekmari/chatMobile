@@ -10,13 +10,7 @@ import SnapKit
 
 class AuthViewController: UIViewController {
     
-    let logo = UILabel()
-    let imageView = UIImageView()
-    var image = UIImage(named: "sasha")
-    
-    let sashaAndDima = UIStackView()
     let loginAndPassword = UIStackView()
-    
     
     var login = UITextField()
     var password = UITextField()
@@ -36,8 +30,7 @@ class AuthViewController: UIViewController {
     private func configure() { // метод вызова других методов setup<Views>
         setupViewUI()
         
-        setupLabel()
-        setupImages()
+        
         setupStackViews()
         setupTextFields()
         setupButtonsUI()
@@ -51,16 +44,6 @@ class AuthViewController: UIViewController {
     
     private func setupViewUI() { // конфигурация view(фона)
         view.backgroundColor = .systemCyan
-    }
-    private func setupLabel() {
-        logo.text = "MESSENGER"
-        logo.font = UIFont(name: "Open Sans", size: 35)
-        logo.textAlignment = .center
-        logo.textColor = UIColor.white
-        logo.numberOfLines = 0
-    }
-    private func setupImages() {
-        imageView.image = image
     }
     // MARK: - Конфигурация Кнопок "Войти" и "Зарегестрироваться"
     private func setupButtonsUI() {
@@ -85,11 +68,6 @@ class AuthViewController: UIViewController {
     }
     // MARK: - Конфигурация StackView
     private func setupStackViews() {
-        sashaAndDima.axis = .horizontal
-        sashaAndDima.alignment = .fill
-        sashaAndDima.distribution = .fill
-        sashaAndDima.spacing = 10
-        
         loginAndPassword.axis = .vertical
         loginAndPassword.alignment = .fill
         loginAndPassword.distribution = .fill
@@ -97,8 +75,14 @@ class AuthViewController: UIViewController {
     }
     // MARK: - TextField
     private func setupTextFields() {
-        login = UITextField(frame: CGRect(x: 0, y: 0, width: 244, height: 36))
-        password = UITextField(frame: CGRect(x: 0, y: 0, width: 244, height: 36))
+        login = UITextField(frame: CGRect(x: 0,
+                                          y: 0,
+                                          width: 244,
+                                          height: 36))
+        password = UITextField(frame: CGRect(x: 0,
+                                             y: 0,
+                                             width: 244,
+                                             height: 36))
         
         login.backgroundColor = .white
         password.backgroundColor = .white
@@ -132,18 +116,13 @@ class AuthViewController: UIViewController {
         
         login.textContentType = .emailAddress
         password.textContentType = .password
-    
+        
+        login.delegate = self
+        password.delegate = self
     }
     private func setupViewsSubviews() {
-        let stackViews = [sashaAndDima, loginAndPassword]
+        let stackViews = [loginAndPassword]
         for stackView in stackViews { view.addSubview(stackView) }
-        
-        sashaAndDima.addSubview(imageView)
-        sashaAndDima.layer.borderColor = UIColor.black.cgColor
-        sashaAndDima.layer.borderWidth = 1
-        
-        let labels = [logo]
-        for label in labels { view.addSubview(label) }
         
         let textFields = [login , password]
         for textField in textFields { loginAndPassword.addSubview(textField) }
@@ -152,22 +131,6 @@ class AuthViewController: UIViewController {
         for button in buttons { view.addSubview(button) }
     }
     private func setupViewsConstrains() {
-        
-        logo.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().dividedBy(3)
-        }
-        sashaAndDima.snp.makeConstraints { make in
-            make.height.equalTo(200)
-            make.centerX.equalToSuperview()
-            make.top.equalTo(logo.snp.bottom).offset(12)
-            make.leading.equalToSuperview().inset(12)
-            make.trailing.equalToSuperview().inset(12)
-        }
-        imageView.snp.makeConstraints { make in
-            make.height.equalTo(40)
-            make.width.equalTo(40)
-        }
         loginAndPassword.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview()
@@ -206,6 +169,7 @@ class AuthViewController: UIViewController {
     }
     private func setupViewsActions() {
         faq.addTarget(self, action: #selector(faqOpen), for: .touchUpInside)
+        signUp.addTarget(self, action: #selector(showRegister), for: .touchUpInside)
     }
    
    
@@ -220,7 +184,20 @@ extension AuthViewController {
         let vc = FAQViewController()
         self.present(vc, animated: true)
     }
+    @objc func showRegister() {
+        let vc = RegistrationViewController()
+        self.present(vc, animated: true)
+    }
 }
 
 
-
+extension AuthViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == login {
+            password.becomeFirstResponder()
+        } else {
+            textField.resignFirstResponder()
+        }
+        return true
+    }
+}
