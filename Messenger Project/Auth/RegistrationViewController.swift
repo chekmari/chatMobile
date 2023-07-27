@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class RegistrationViewController: UIViewController, UITextFieldDelegate {
+class RegistrationViewController: UIViewController {
     
     let registerStackView = UIStackView()
     
@@ -26,7 +26,7 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
-        
+        updateSignUpButtonState()
         
     }
     
@@ -196,11 +196,118 @@ class RegistrationViewController: UIViewController, UITextFieldDelegate {
             make.centerX.equalToSuperview()
         }
     }
-    private func setupViewsActions() {}
-
+    private func setupViewsActions() {
+        let textFields = [email, password, firstName, lastName, middleName]
+        for textField in textFields {
+            textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        }
+        send.addTarget(self, action: #selector(signUpPressed), for: .touchUpInside)
+    }
+    
 }
     
+// MARK: - textFields delegates methods
+extension RegistrationViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case email: password.becomeFirstResponder()
+        case password:
+            firstName.becomeFirstResponder()
+        case firstName: lastName.becomeFirstResponder()
+        case lastName:
+            middleName.becomeFirstResponder()
+        case middleName: age.becomeFirstResponder()
+        case age: country.becomeFirstResponder()
+        case country: town.becomeFirstResponder()
+        case town: textField.resignFirstResponder()
+        default:
+            textField.resignFirstResponder()
+        }
+        return true
+    }
+}
 
-   
+// MARK: - функция которая создает alert
+extension RegistrationViewController {
+    private func createAlert(title: String, message: String, buttonText: String) -> UIAlertController {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: buttonText, style: .default)
+        alertController.addAction(action)
+        return alertController
+    }
+}
+
+// MARK: - json method
+extension RegistrationViewController {
+    @objc func signUpPressed() {
+        guard let email = email.text,
+              let password = password.text,
+              let firstName = firstName.text,
+              let lastName = lastName.text,
+              let middleName = middleName.text else { return }
+        
+        var requestData: [String:Any] = [
+            "email": email,
+            "password": password,
+            "first_name": firstName,
+            "last_name": lastName,
+            "middle_name": middleName
+        ]
+        
+        if let ageText = age.text, !ageText.isEmpty, let age = Int(ageText) {
+            requestData["age"] = age
+        }
+        if let country = country.text, !country.isEmpty {
+            requestData["country"] = country
+        }
+        if let town = town.text, !town.isEmpty {
+            requestData["town"] = town
+        }
+        
+        do {
+            // convert dict to json
+            let jsonData = try JSONSerialization.data(withJSONObject: requestData, options: [])
+            // Optionally, convert JSON data to a string for logging (for debugging purposes)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    print(jsonString)
+            }
+        } catch {
+            print("ошибка отправки json")
+        }
+        
+        
+        
+        
+    }
+}
 
 
+// MARK: - Наблюдатели для обязательных полей
+extension RegistrationViewController {
+    
+    
+    @objc private func updateSignUpButtonState() {
+        // Проверка на обязательные поля при регистрации
+        let isEmailValid = isValid(textField: email)
+        let isPasswordValid = isValid(textField: password)
+        let isFirstNameValid = isValid(textField: firstName)
+        let isLastNameValid = isValid(textField: lastName)
+        let isMiddleNameValid = isValid(textField: middleName)
+        
+        let isSignUpButtonEnabled = isEmailValid &&
+                                    isPasswordValid &&
+                                    isFirstNameValid &&
+                                    isLastNameValid &&
+                                    isMiddleNameValid
+        
+        send.isEnabled = isSignUpButtonEnabled
+    }
+    private func isValid(textField: UITextField) -> Bool {
+        return !(textField.text ?? "").isEmpty
+    }
+    @objc func textFieldDidChange(_ textField: UITextField) {
+           // Этот метод вызывается при изменении содержимого любого из текстовых полей
+           
+           updateSignUpButtonState()
+       }
+}

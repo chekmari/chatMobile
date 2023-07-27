@@ -102,8 +102,7 @@ class AuthViewController: UIViewController {
         
     }
     private func setupViewsSubviews() {
-        let stackViews = [loginAndPassword]
-        for stackView in stackViews { view.addSubview(stackView) }
+        view.addSubview(loginAndPassword)
         
         let textFields = [login , password]
         for textField in textFields { loginAndPassword.addSubview(textField) }
@@ -156,7 +155,7 @@ class AuthViewController: UIViewController {
 }
 
 
-// MARK: - objc methods
+// MARK: - переходы между viewControllers
 extension AuthViewController {
     
     @objc func faqOpen() {
@@ -169,7 +168,7 @@ extension AuthViewController {
     }
 }
 
-
+// MARK: - textFields delegates methods
 extension AuthViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == login {
@@ -180,3 +179,6 @@ extension AuthViewController: UITextFieldDelegate {
         return true
     }
 }
+
+// MARK: -
+
