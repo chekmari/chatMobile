@@ -51,7 +51,6 @@ class AuthViewController: UIViewController {
         signUp.setTitle("Sign Up", for: .normal)
         faq.setTitle("FAQ", for: .normal)
         
-        
         logIn.setTitleColor(.black, for: .normal)
         signUp.setTitleColor(.black, for: .normal)
         faq.setTitleColor(.black, for: .normal)
@@ -91,7 +90,6 @@ class AuthViewController: UIViewController {
         password.placeholder = "Enter your password"
         
         login.keyboardType = .emailAddress
-        password.keyboardType = .default
         
         login.returnKeyType = .next
         password.returnKeyType = .join
@@ -120,9 +118,6 @@ class AuthViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview()
         }
-        loginAndPassword.layer.borderColor = UIColor.black.cgColor
-        loginAndPassword.layer.borderWidth = 1
-        
         login.snp.makeConstraints { make in
             make.width.equalTo(200)
             make.height.equalTo(44)
