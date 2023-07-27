@@ -72,26 +72,23 @@ class AuthViewController: UIViewController {
         loginAndPassword.alignment = .fill
         loginAndPassword.distribution = .fill
         loginAndPassword.spacing = 10
+        loginAndPassword.center = view.center
     }
     // MARK: - TextField
     private func setupTextFields() {
-        login = UITextField(frame: CGRect(x: 0,
-                                          y: 0,
-                                          width: 244,
-                                          height: 36))
-        password = UITextField(frame: CGRect(x: 0,
-                                             y: 0,
-                                             width: 244,
-                                             height: 36))
-        
-        login.backgroundColor = .white
-        password.backgroundColor = .white
+        let textFields = [login,password]
+        for textField in textFields {
+            textField.backgroundColor = .white
+            textField.borderStyle = .roundedRect
+            textField.textAlignment = .left
+            textField.autocapitalizationType = .none
+            textField.adjustsFontSizeToFitWidth = true
+            textField.clearButtonMode = .always
+            textField.delegate = self
+        }
         
         login.placeholder = "Enter your login"
         password.placeholder = "Enter your password"
-        
-        login.borderStyle = .roundedRect
-        password.borderStyle = .roundedRect
         
         login.keyboardType = .emailAddress
         password.keyboardType = .default
@@ -102,23 +99,9 @@ class AuthViewController: UIViewController {
         login.isSecureTextEntry = false
         password.isSecureTextEntry = true
         
-        login.textAlignment = .left
-        password.textAlignment = .left
-        
-        login.autocapitalizationType = .none
-        password.autocapitalizationType = .none
-        
-        login.adjustsFontSizeToFitWidth = true
-        password.adjustsFontSizeToFitWidth = true
-        
-        login.clearButtonMode = .always
-        password.clearButtonMode = .always
-        
         login.textContentType = .emailAddress
         password.textContentType = .password
         
-        login.delegate = self
-        password.delegate = self
     }
     private func setupViewsSubviews() {
         let stackViews = [loginAndPassword]
@@ -132,23 +115,24 @@ class AuthViewController: UIViewController {
     }
     private func setupViewsConstrains() {
         loginAndPassword.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+            make.height.equalTo(100)
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.height.equalTo(80)
-            make.width.equalTo(260)
         }
+        loginAndPassword.layer.borderColor = UIColor.black.cgColor
+        loginAndPassword.layer.borderWidth = 1
+        
         login.snp.makeConstraints { make in
-            make.height.equalTo(36)
-            make.width.equalTo(244)
+            make.width.equalTo(200)
+            make.height.equalTo(44)
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview()
         }
         password.snp.makeConstraints { make in
-            make.height.equalTo(36)
-            make.width.equalTo(244)
+            make.width.equalTo(200)
+            make.height.equalTo(44)
+            make.top.equalTo(login.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
-            make.top.equalTo(login.snp.bottom).offset(4)
-            make.bottom.equalToSuperview()
         }
         logIn.snp.makeConstraints { make in
             make.top.equalTo(loginAndPassword.snp.bottom).offset(20)
