@@ -197,8 +197,8 @@ class RegistrationViewController: UIViewController {
         }
     }
     private func setupViewsActions() {
-        let textFields = [email, password, firstName, lastName, middleName]
-        for textField in textFields {
+        let requiredTextFields = [email, password, firstName, lastName, middleName]
+        for textField in requiredTextFields {
             textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         }
         send.addTarget(self, action: #selector(signUpPressed), for: .touchUpInside)
@@ -211,11 +211,9 @@ extension RegistrationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         switch textField {
         case email: password.becomeFirstResponder()
-        case password:
-            firstName.becomeFirstResponder()
+        case password: firstName.becomeFirstResponder()
         case firstName: lastName.becomeFirstResponder()
-        case lastName:
-            middleName.becomeFirstResponder()
+        case lastName: middleName.becomeFirstResponder()
         case middleName: age.becomeFirstResponder()
         case age: country.becomeFirstResponder()
         case country: town.becomeFirstResponder()
@@ -267,7 +265,7 @@ extension RegistrationViewController {
         do {
             // convert dict to json
             let jsonData = try JSONSerialization.data(withJSONObject: requestData, options: [])
-            // Optionally, convert JSON data to a string for logging (for debugging purposes)
+            // печатаем json в консоль
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                     print(jsonString)
             }
@@ -282,9 +280,8 @@ extension RegistrationViewController {
 }
 
 
-// MARK: - Наблюдатели для обязательных полей
+// MARK: - Наблюдатели для обязательных полей textFields
 extension RegistrationViewController {
-    
     
     @objc private func updateSignUpButtonState() {
         // Проверка на обязательные поля при регистрации
@@ -306,8 +303,9 @@ extension RegistrationViewController {
         return !(textField.text ?? "").isEmpty
     }
     @objc func textFieldDidChange(_ textField: UITextField) {
-           // Этот метод вызывается при изменении содержимого любого из текстовых полей
-           
+           // Этот метод вызывается при изменении textfields
            updateSignUpButtonState()
-       }
+    }
 }
+
+

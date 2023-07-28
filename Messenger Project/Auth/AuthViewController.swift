@@ -146,8 +146,11 @@ class AuthViewController: UIViewController {
         }
     }
     private func setupViewsActions() {
+        login.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        password.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         faq.addTarget(self, action: #selector(faqOpen), for: .touchUpInside)
         signUp.addTarget(self, action: #selector(showRegister), for: .touchUpInside)
+        logIn.addTarget(self, action: #selector(logInPressed), for: .touchUpInside)
     }
    
    
@@ -180,5 +183,48 @@ extension AuthViewController: UITextFieldDelegate {
     }
 }
 
-// MARK: -
+// MARK: - json method
+extension AuthViewController {
+    @objc func logInPressed() {
+        guard let email = login.text,
+              let password = password.text else { return }
+        
+        var requestData: [String:Any] = [
+            "email": email,
+            "password": password
+        ]
+        
+        do {
+            // convert dict to json
+            let jsonData = try JSONSerialization.data(withJSONObject: requestData, options: [])
+            // печатаем json в консоль
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print(jsonString)
+            }
+        } catch {
+            print("ошибка отправки json")
+        }
+    }
+}
+
+
+// MARK: - Наблюдатели для для обязательных полей textFields
+extension AuthViewController {
+    @objc private func updateLogInButtonState() {
+         // Проверка на обязательные поля при входе в аккаунт
+        let isEmailValid = isValid(textField: login)
+        let isPasswordValid = isValid(textField: password)
+        
+        let isLogInEnabled = isEmailValid &&
+                             isPasswordValid
+        logIn.isEnabled = isLogInEnabled
+    }
+    private func isValid(textField: UITextField) -> Bool {
+        return !(textField.text ?? "").isEmpty
+    }
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        // этот метод вызывается при изменениb text
+        updateLogInButtonState()
+    }
+}
 
