@@ -19,23 +19,16 @@ class AuthViewController: UIViewController {
     let signUp = UIButton()
     let faq = UIButton()
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
-        
     }
-
-    
     private func configure() { // метод вызова других методов setup<Views>
         setupViewUI()
-        
-        
+    
         setupStackViews()
         setupTextFields()
         setupButtonsUI()
-        
-        
         
         setupViewsSubviews()
         setupViewsConstrains()
@@ -99,7 +92,6 @@ class AuthViewController: UIViewController {
         
         login.textContentType = .emailAddress
         password.textContentType = .password
-        
     }
     private func setupViewsSubviews() {
         view.addSubview(loginAndPassword)
@@ -110,6 +102,29 @@ class AuthViewController: UIViewController {
         let buttons = [logIn, signUp, faq]
         for button in buttons { view.addSubview(button) }
     }
+    private func setupViewsActions() {
+        login.addTarget(   self,
+                           action: #selector(textFieldDidChange),
+                           for: .editingChanged)
+        password.addTarget(self,
+                           action: #selector(textFieldDidChange),
+                           for: .editingChanged)
+        faq.addTarget(     self,
+                           action: #selector(faqOpen),
+                           for: .touchUpInside)
+        signUp.addTarget(  self,
+                           action: #selector(showRegister),
+                           for: .touchUpInside)
+        logIn.addTarget(   self,
+                           action: #selector(logInPressed),
+                           for: .touchUpInside)
+    }
+   
+   
+    
+}
+// MARK: - верстка UI
+extension AuthViewController {
     private func setupViewsConstrains() {
         loginAndPassword.snp.makeConstraints { make in
             make.width.equalToSuperview()
@@ -145,19 +160,7 @@ class AuthViewController: UIViewController {
             make.bottom.equalToSuperview().inset(28)
         }
     }
-    private func setupViewsActions() {
-        login.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        password.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        faq.addTarget(self, action: #selector(faqOpen), for: .touchUpInside)
-        signUp.addTarget(self, action: #selector(showRegister), for: .touchUpInside)
-        logIn.addTarget(self, action: #selector(logInPressed), for: .touchUpInside)
-    }
-   
-   
-    
 }
-
-
 // MARK: - переходы между viewControllers
 extension AuthViewController {
     
@@ -170,7 +173,6 @@ extension AuthViewController {
         self.present(vc, animated: true)
     }
 }
-
 // MARK: - textFields delegates methods
 extension AuthViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -182,8 +184,7 @@ extension AuthViewController: UITextFieldDelegate {
         return true
     }
 }
-
-// MARK: - json method
+// MARK: - JSON method
 extension AuthViewController {
     @objc func logInPressed() {
         guard let email = login.text,
@@ -201,8 +202,40 @@ extension AuthViewController {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 print(jsonString)
             }
-        } catch {
+        }
+        catch {
             print("ошибка отправки json")
+        }
+        accountLogin()
+    }
+    
+    private func accountLogin() {
+        if let fileURL = FileManager.default.urls(for:.documentDirectory,
+                                                  in: .userDomainMask).first?.appendingPathComponent("UsersJSON.json") {
+            if let data = try? Data(contentsOf: fileURL) {
+                do {
+                    let users = try JSONDecoder().decode([User].self,
+                                                         from: data)
+                    
+                    for user in users {
+                        if user.email == login.text ,
+                           user.password == password.text {
+                            let mainVC = MainViewController()
+                            self.present(mainVC, animated: true)
+                        } else {
+                            let alert = createAlert(title: "WARNING!",
+                                                    message: "This user does not exist. Check the entered data!",
+                                                    buttonText: "OK")
+                            self.present(alert,
+                                         animated: true)
+                        }
+                    }
+                }
+                catch {
+                    print("Error decoding JSON: \(error)")
+                }
+                
+            }
         }
     }
 }

@@ -90,11 +90,16 @@ class RegistrationViewController: UIViewController {
             .font: UIFont.systemFont(ofSize: 14)
         ]
 
-        let emailPlaceholder = NSAttributedString(string: "Enter your login", attributes: optionalAttributes)
-        let passwordPlaceholder = NSAttributedString(string: "Enter your password", attributes: optionalAttributes)
-        let firstNamePlaceholder = NSAttributedString(string: "Enter your first name", attributes: optionalAttributes)
-        let lastNamePlaceholder = NSAttributedString(string: "Enter your last name", attributes: optionalAttributes)
-        let middleNamePlaceholder = NSAttributedString(string: "Enter your middle name", attributes: optionalAttributes)
+        let emailPlaceholder = NSAttributedString(string: "Enter your login",
+                                                  attributes: optionalAttributes)
+        let passwordPlaceholder = NSAttributedString(string: "Enter your password",
+                                                     attributes: optionalAttributes)
+        let firstNamePlaceholder = NSAttributedString(string: "Enter your first name",
+                                                      attributes: optionalAttributes)
+        let lastNamePlaceholder = NSAttributedString(string: "Enter your last name",
+                                                     attributes: optionalAttributes)
+        let middleNamePlaceholder = NSAttributedString(string: "Enter your middle name",
+                                                       attributes: optionalAttributes)
         
         email.attributedPlaceholder = emailPlaceholder
         password.attributedPlaceholder = passwordPlaceholder
@@ -197,7 +202,11 @@ class RegistrationViewController: UIViewController {
         }
     }
     private func setupViewsActions() {
-        let requiredTextFields = [email, password, firstName, lastName, middleName]
+        let requiredTextFields = [email,
+                                  password,
+                                  firstName,
+                                  lastName,
+                                  middleName]
         for textField in requiredTextFields {
             textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         }
@@ -225,15 +234,6 @@ extension RegistrationViewController: UITextFieldDelegate {
     }
 }
 
-// MARK: - функция которая создает alert
-extension RegistrationViewController {
-    private func createAlert(title: String, message: String, buttonText: String) -> UIAlertController {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: buttonText, style: .default)
-        alertController.addAction(action)
-        return alertController
-    }
-}
 
 // MARK: - json method
 extension RegistrationViewController {
@@ -251,6 +251,7 @@ extension RegistrationViewController {
             "last_name": lastName,
             "middle_name": middleName
         ]
+    
         
         if let ageText = age.text, !ageText.isEmpty, let age = Int(ageText) {
             requestData["age"] = age
@@ -263,6 +264,7 @@ extension RegistrationViewController {
         }
         
         do {
+            // MARK: - отправка
             // convert dict to json
             let jsonData = try JSONSerialization.data(withJSONObject: requestData, options: [])
             // печатаем json в консоль
@@ -274,8 +276,48 @@ extension RegistrationViewController {
         }
         
         
-        
-        
+        // добавляем user в json
+        createUser()
+    }
+    
+    private func createUser() {
+        if let fileURL = FileManager.default.urls(for:.documentDirectory,
+                                                  in:     .userDomainMask).first?.appendingPathComponent("UsersJSON.json") {
+            guard let email = email.text,
+                  let password = password.text,
+                  let firstName = firstName.text,
+                  let lastName = lastName.text,
+                  let middleName = middleName.text else { return }
+            
+            var newUser = User(email: email,
+                               password: password,
+                               firstName: firstName,
+                               middleName: middleName,
+                               lastName: lastName)
+            
+            if let ageText = age.text, !ageText.isEmpty { newUser.age = ageText }
+            if let country = country.text, !country.isEmpty { newUser.country = country }
+            if let town = town.text, !town.isEmpty { newUser.town = town }
+            
+            var existingUsers: [User] = []
+            if let data = try? Data(contentsOf: fileURL) {
+                do {
+                    existingUsers = try JSONDecoder().decode([User].self, from: data)
+                }
+                catch {
+                    print("ошибка в createUser()")
+                }
+            }
+            existingUsers.append(newUser)
+            do {
+                let jsonData = try JSONEncoder().encode(existingUsers)
+                try jsonData.write(to: fileURL)
+                print("Data written to JSON file.")
+            }
+            catch {
+                print("ошибка в createUser()")
+            }
+        }
     }
 }
 
